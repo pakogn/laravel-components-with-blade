@@ -147,6 +147,8 @@ We can reference to the component's "dynamic" sections thanks to the next [imple
 
 Using this suggestion of component definition it's kind of inefficient because the javascript and css will be pushed to the stack on every implementation. So the styles and scripts should be in their respective assets files.
 
+## Furthermore
+
 In Addition there are a few commits showing the implementation of a data table component:
 
 [adding a simple data table component.](https://github.com/pakogn/laravel-components-with-blade/commit/1213fe1e7d85cd56afc182a29d2bbd581b1592f9)
