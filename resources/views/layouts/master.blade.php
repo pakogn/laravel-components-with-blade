@@ -3,6 +3,8 @@
 	<head>
 		<title>Laravel Components</title>
 
+		<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
+
 		<style type="text/css">
 			@stack('css')
 		</style>

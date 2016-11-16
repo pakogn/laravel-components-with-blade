@@ -15,4 +15,39 @@
 		'id' => 'dangerAlert',
 		'type' => 'alert-danger'
 	])
+
+	<div class="SimpleColumn">
+		@section('usersTableHeader')
+			<th>Name</th>
+			<th>Email</th>
+		@stop
+		@section('usersTableBody')
+			@foreach ($users as $user)
+				<tr>
+					<td>{{ $user['name'] }}</td>
+					<td>{{ $user['email'] }}</td>
+				</tr>
+			@endforeach
+		@stop
+		@include('components.dataTable.component', [
+			'id' => 'users',
+		])
+	</div>
+	<div class="SimpleColumn">
+		@section('contactsTableHeader')
+			<th>Name</th>
+			<th>Phone</th>
+		@stop
+		@section('contactsTableBody')
+			@foreach ($contacts as $contact)
+				<tr>
+					<td>{{ $contact['name'] }}</td>
+					<td>{{ $contact['phone'] }}</td>
+				</tr>
+			@endforeach
+		@stop
+		@include('components.dataTable.component', [
+			'id' => 'contacts',
+		])
+	</div>
 @stop

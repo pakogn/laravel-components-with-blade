@@ -1,0 +1,25 @@
+.SimpleColumn {
+    width: 30%;
+    float: left;
+    padding: 10px;
+}
+.DataTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+.DataTable th {
+    height: 30px;
+    background-color: #607d8b;
+    color: white;
+}
+.DataTable tr:hover {
+    background-color: #f5f5f5
+}
+.DataTable tr:nth-child(even) {
+    background-color: #f2f2f2
+}
+.DataTable th, .DataTable td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}

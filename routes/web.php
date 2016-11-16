@@ -12,5 +12,27 @@
  */
 
 Route::get('/', ['as' => 'index', function () {
-    return view('index');
+    $users = [
+        [
+            'name' => 'John',
+            'email' => 'john@example.com',
+        ],
+        [
+            'name' => 'Jenny',
+            'email' => 'jenny@example.com',
+        ],
+    ];
+
+    $contacts = [
+        [
+            'name' => 'Peter',
+            'phone' => '826-898-0812',
+        ],
+        [
+            'name' => 'Chris',
+            'phone' => '996-575-3925',
+        ],
+    ];
+
+    return view('index', compact('users', 'contacts'));
 }]);
