@@ -34,5 +34,7 @@ Route::get('/', ['as' => 'index', function () {
         ],
     ];
 
-    return view('index', compact('users', 'contacts'));
+    $candidates = [];
+
+    return view('index', compact('users', 'contacts', 'candidates'));
 }]);

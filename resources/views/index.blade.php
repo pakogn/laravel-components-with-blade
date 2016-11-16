@@ -30,7 +30,7 @@
 			@endforeach
 		@stop
 		@include('components.dataTable.component', [
-			'id' => 'users',
+			'elements' => 'users',
 		])
 	</div>
 	<div class="SimpleColumn">
@@ -47,7 +47,22 @@
 			@endforeach
 		@stop
 		@include('components.dataTable.component', [
-			'id' => 'contacts',
+			'elements' => 'contacts',
+		])
+	</div>
+	<div class="SimpleColumn">
+		@section('contactsTableHeader')
+			<th>Name</th>
+		@stop
+		@section('contactsTableBody')
+			@foreach ($candidates as $candidate)
+				<tr>
+					<td>{{ $candidate['name'] }}</td>
+				</tr>
+			@endforeach
+		@stop
+		@include('components.dataTable.component', [
+			'elements' => 'candidates',
 		])
 	</div>
 @stop

@@ -1,10 +1,14 @@
 <table class="DataTable">
-	<thead>
-		<tr>
-			@yield($id.'TableHeader')
-		</tr>
-	</thead>
-	<tbody>
-		@yield($id.'TableBody')
-	</tbody>
+	@if (count($$elements) === 0)
+		There are no @lang("resources.{$elements}")
+	@else
+		<thead>
+			<tr>
+				@yield($elements.'TableHeader')
+			</tr>
+		</thead>
+		<tbody>
+			@yield($elements.'TableBody')
+		</tbody>
+	@endif
 </table>
