@@ -1,40 +1,158 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img width="150"src="https://laravel.com/laravel.png"></a></p>
+# Laravel Components With Blade
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+This is an example on how to make your own "components" with Blade and reuse them.
 
-## About Laravel
+The main idea is to take advantage of the **@yield** and **@section** directives to achieve this.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+## Setup
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+For first, We need a [Master Layout](https://github.com/pakogn/laravel-components-with-blade/blob/111c1f1a09abde485032899aa1d6e7f292886116/resources/views/layouts/master.blade.php):
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation give you tools you need to build any application with which you are tasked.
+[*/resources/views/layouts/master.blade.php*](https://github.com/pakogn/laravel-components-with-blade/blob/111c1f1a09abde485032899aa1d6e7f292886116/resources/views/layouts/master.blade.php)
 
-## Learning Laravel
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Laravel Components</title>
 
-Laravel has the most extensive and thorough documentation and video tutorial library of any modern web application framework. The [Laravel documentation](https://laravel.com/docs) is thorough, complete, and makes it a breeze to get started learning the framework.
+		<style type="text/css">
+			@stack('css')
+		</style>
+	</head>
+	<body>
+		@yield('content')
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 900 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+		<script type="text/javascript" src="{{ asset('assets/plugins/jquery/jquery-3.1.1.min.js') }}"></script>
 
-## Contributing
+		<script type="text/javascript">
+			@stack('javascript')
+		</script>
+	</body>
+</html>
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+```
+Notice that we are using jQuery for convenience.
+```
 
-## Security Vulnerabilities
+Now that we have our layout, let's create our component. A suggestion is to save them in */resources/views/components*, so lets create a simple alert component.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+*[/resources/views/components/alert/component.blade.php](https://github.com/pakogn/laravel-components-with-blade/blob/master/resources/views/components/alert/component.blade.php)*
 
-## License
+```html
+@push('javascript')
+	$('.alert').slideDown(600);
+@endpush
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+<div class="alert {{ $type or 'alert-info' }}" style="display: none;" role="alert">
+	@yield($id.'Content')
+</div>
+
+@push('css')
+	.alert {
+	    padding: 15px;
+	    margin-bottom: 20px;
+	    border: 1px solid transparent;
+	    border-radius: 4px;
+	}
+	.alert-success {
+	    color: #3c763d;
+	    background-color: #dff0d8;
+	    border-color: #d6e9c6;
+	}
+	.alert-info {
+	    color: #31708f;
+	    background-color: #d9edf7;
+	    border-color: #bce8f1;
+	}
+	.alert-warning {
+	    color: #8a6d3b;
+	    background-color: #fcf8e3;
+	    border-color: #faebcc;
+	}
+	.alert-danger {
+	    color: #a94442;
+	    background-color: #f2dede;
+	    border-color: #ebccd1;
+	}
+@endpush
+```
+
+This is a simple component definition, now let's use it to see it's power. Let's create a view to use the component.
+
+*[/resources/views/index.blade.php](https://github.com/pakogn/laravel-components-with-blade/blob/111c1f1a09abde485032899aa1d6e7f292886116/resources/views/index.blade.php)*
+
+```html
+@extends('layouts.master')
+
+@section('content')
+	@section('infoAlertContent')
+		Common Alert!
+	@stop
+	@include('components.alert.component', [
+		'id' => 'infoAlert',
+	])
+
+	@section('dangerAlertContent')
+		This is an Error Alert!
+	@stop
+	@include('components.alert.component', [
+		'id' => 'dangerAlert',
+		'type' => 'alert-danger'
+	])
+@stop
+```
+
+Notice that we have to register a route to return the view created. A simple approach is to replace the existing route in *[/routes/web.php](https://github.com/pakogn/laravel-components-with-blade/blob/111c1f1a09abde485032899aa1d6e7f292886116/routes/web.php)* to have this:
+
+```php
+Route::get('/', ['as' => 'index', function () {
+    return view('index');
+}]);
+```
+
+Now it's time to check our setup!
+
+run:
+  1. composer install
+  2. php artisan serve
+  3. go to [http://localhost:8000](http://localhost:8000)
+
+## Explanation
+
+Firstly, let's review the [implementation](https://github.com/pakogn/laravel-components-with-blade/blob/111c1f1a09abde485032899aa1d6e7f292886116/resources/views/index.blade.php).
+
+```html
+@section('dangerAlertContent')
+	This is an Error Alert!
+@stop
+@include('components.alert.component', [
+	'id' => 'dangerAlert',
+	'type' => 'alert-danger'
+])
+```
+
+A suggestion is to have an id per component to make it unique. This identifier allows us to inject content in the component's yield sections. So when we are referring to the **@section('dangerAlertContent')** it's because we are referring the component's implementation id concatenated with the name of the component's yield section defined.
+
+```
+Notice that firstly we are referring the component's yield sections and secondly we are including the component.
+```
+
+We can reference to the component's "dynamic" sections thanks to the next [implementation](https://github.com/pakogn/laravel-components-with-blade/blob/master/resources/views/components/alert/component.blade.php#L6) of the **@yield** directive:
+
+```html
+@yield($id.'Content')
+```
+
+Using this suggestion of component definition it's kind of inefficient because the javascript and css will be pushed to the stack on every implementation. So the styles and scripts should be in their respective assets files.
+
+In Addition there are a few commits showing the implementation of a data table component:
+
+[adding a simple data table component.](https://github.com/pakogn/laravel-components-with-blade/commit/1213fe1e7d85cd56afc182a29d2bbd581b1592f9)
+
+Also, adding support for more interesting cases:
+
+[adding simple support when there are no elements.](https://github.com/pakogn/laravel-components-with-blade/commit/fef525894c52b887bbfa3d84ef4b9e7a898e22b2)
+
+Any question or suggestion feel free to contact me at daniel@garcianoriega.com.
